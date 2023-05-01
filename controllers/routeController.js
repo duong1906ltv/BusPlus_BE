@@ -23,6 +23,42 @@ const getAllRoutesInfo = async (req, res) => {
 	}
 };
 
+const getForwardRouteStations = async (req, res) => {
+	const { routeNumber } = req.params;
+	try {
+		const route = await Route.findOne({
+			routeNumber: routeNumber,
+		}).populate("forwardRoute");
+		const forwardStations = route.forwardRoute.map((station) => ({
+			id: station._id,
+			name: station.name,
+			location: station.location,
+			// Thêm các thông tin khác của station nếu cần thiết
+		}));
+		res.status(200).json(forwardStations);
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+};
+
+const getBackwardRouteStations = async (req, res) => {
+	const { routeNumber } = req.params;
+	try {
+		const route = await Route.findOne({
+			routeNumber: routeNumber,
+		}).populate("backwardRoute");
+		const backwardStations = route.backwardRoute.map((station) => ({
+			id: station._id,
+			name: station.name,
+			location: station.location,
+			// Thêm các thông tin khác của station nếu cần thiết
+		}));
+		res.status(200).json(backwardStations);
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+};
+
 // Phương thức để tạo một tuyến xe buýt mới
 const createRoute = async (req, res) => {
 	try {
@@ -144,4 +180,6 @@ export {
 	updateRoute,
 	deleteRoute,
 	getAllRoutesInfo,
+	getForwardRouteStations,
+	getBackwardRouteStations,
 };
