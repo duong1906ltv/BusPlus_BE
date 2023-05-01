@@ -1,4 +1,5 @@
 import Route from "../models/Route.js"; // Import Route model
+import Schedule from "../models/Schedule.js";
 import Station from "../models/Station.js"; // Import Station model
 
 // Phương thức để lấy danh sách tất cả các tuyến xe buýt
@@ -35,7 +36,25 @@ const getForwardRouteStations = async (req, res) => {
 			location: station.location,
 			// Thêm các thông tin khác của station nếu cần thiết
 		}));
-		res.status(200).json(forwardStations);
+
+		// Lấy thông tin lịch trình cho route
+		const schedule = await Schedule.findOne({ route: route._id });
+		const { departureTime, arrivalTime } = schedule;
+
+		const result = {
+			route: {
+				id: route._id,
+				routeName: route.routeName,
+				routeNumber: route.routeNumber,
+				cost: route.cost,
+				forwardRoute: forwardStations,
+			},
+			schedule: {
+				departureTime: departureTime.join(", "),
+				arrivalTime: arrivalTime.join(", "),
+			},
+		};
+		res.status(200).json(result);
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
@@ -53,7 +72,25 @@ const getBackwardRouteStations = async (req, res) => {
 			location: station.location,
 			// Thêm các thông tin khác của station nếu cần thiết
 		}));
-		res.status(200).json(backwardStations);
+
+		// Lấy thông tin lịch trình cho route
+		const schedule = await Schedule.findOne({ route: route._id });
+		const { departureTime, arrivalTime } = schedule;
+
+		const result = {
+			route: {
+				id: route._id,
+				routeName: route.routeName,
+				routeNumber: route.routeNumber,
+				cost: route.cost,
+				backwardRoute: backwardStations,
+			},
+			schedule: {
+				departureTime: departureTime.join(", "),
+				arrivalTime: arrivalTime.join(", "),
+			},
+		};
+		res.status(200).json(result);
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
