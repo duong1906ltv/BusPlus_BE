@@ -10,6 +10,7 @@ const busSchema = new mongoose.Schema({
 	busNumber: {
 		type: String,
 		required: true,
+		unique: true,
 	},
 	// currentStation: {
 	// 	type: mongoose.Schema.Types.ObjectId,
@@ -18,16 +19,16 @@ const busSchema = new mongoose.Schema({
 	// },  // Có thể cần
 	driverName: {
 		type: String,
-		required: true,
+		// required: true,
 	},
 	capacity: {
 		type: Number,
-		required: true,
+		// required: true,
 	},
-	createdDate: {
-		type: Date,
-		default: Date.now,
-	},
+	// createdDate: {
+	// 	type: Date,
+	// 	default: Date.now,
+	// },
 });
 
 export default mongoose.model("Bus", busSchema);

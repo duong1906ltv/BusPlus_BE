@@ -1,4 +1,5 @@
 import Bus from "../models/Bus.js";
+import Route from "../models/Route.js";
 
 // Lấy danh sách tất cả các xe buýt
 const getAllBuses = async (req, res) => {
@@ -25,10 +26,15 @@ const getBusById = async (req, res) => {
 
 // Tạo mới một xe buýt
 const createBusInformation = async (req, res) => {
+	const route = await Route.findOne({ routeNumber: req.body.routeNumber });
+	if (!route) {
+		return res.status(400).json({ message: "Route not found" });
+	}
+
 	const bus = new Bus({
-		licensePlate: req.body.licensePlate, // Lấy biển số xe từ request body
-		brand: req.body.brand, // Lấy hãng xe từ request body
-		routeId: req.body.routeId, // Lấy ID của tuyến xe từ request body
+		busNumber: req.body.busNumber, // Lấy biển số xe từ request body
+		// brand: req.body.brand, // Lấy hãng xe từ request body
+		routeId: route, // Lấy ID của tuyến xe từ request body
 	});
 
 	try {
