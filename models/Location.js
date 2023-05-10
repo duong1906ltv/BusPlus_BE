@@ -6,11 +6,11 @@ const locationSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Bus",
 	},
-	latitude: {
+	lat: {
 		type: Number,
 		required: true,
 	},
-	longitude: {
+	lng: {
 		type: Number,
 		required: true,
 	},

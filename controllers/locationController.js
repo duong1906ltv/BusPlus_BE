@@ -7,11 +7,11 @@ const createLocation = async (req, res) => {
 		if (!busId) {
 			return res.status(400).json({ message: "Bus not found" });
 		}
-		const { latitude, longitude } = req.body;
+		const { lat, lng } = req.body;
 		const location = new Location({
 			busId,
-			latitude,
-			longitude,
+			lat,
+			lng,
 		});
 		await location.save();
 		res.status(201).json(location);
@@ -48,14 +48,14 @@ const getLocationById = async (req, res) => {
 const updateLocationById = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const { busId, latitude, longitude } = req.body;
+		const { busId, lat, lng } = req.body;
 		const location = await Location.findById(id);
 		if (!location) {
 			return res.status(404).json({ message: "Location not found" });
 		}
 		location.busId = busId;
-		location.latitude = latitude;
-		location.longitude = longitude;
+		location.lat = lat;
+		location.lng = lng;
 		await location.save();
 		res.status(200).json(location);
 	} catch (error) {

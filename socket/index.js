@@ -5,9 +5,9 @@ export const locationChangeStream = () => {
 
 	changeStream.on("change", (change) => {
 		if (change.operationType === "update") {
-			const { busId, latitude, longitude } =
+			const { busId, lat, lng } =
 				change.updateDescription.updatedFields;
-			io.emit("locationChange", { busId, latitude, longitude });
+			io.emit("locationChange", { busId, lat, lng });
 		}
 	});
 
