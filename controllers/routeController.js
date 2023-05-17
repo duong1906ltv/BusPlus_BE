@@ -134,8 +134,8 @@ const addListStationToRoute = async (req, res) => {
 				const newStation = new Station({
 					name: station.address,
 					location: {
-						longitude: station.latLng.lng,
-						latitude: station.latLng.lat,
+						lng: station.latLng.lng,
+						lat: station.latLng.lat,
 					},
 				});
 
@@ -158,8 +158,8 @@ const addListStationToRoute = async (req, res) => {
 				const newStation = new Station({
 					name: station.name,
 					location: {
-						longitude: station.lng,
-						latitude: station.lat,
+						lng: station.lng,
+						lat: station.lat,
 					},
 				});
 
