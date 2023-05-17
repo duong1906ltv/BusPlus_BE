@@ -25,6 +25,10 @@ const busSchema = new mongoose.Schema({
 		type: Number,
 		// required: true,
 	},
+	activeStatus: {
+		type: Boolean,
+		default: false,
+	}
 	// createdDate: {
 	// 	type: Date,
 	// 	default: Date.now,

@@ -7,9 +7,11 @@ import {
 	updateBusInformation,
 	getAllBuses,
 	getBusById,
+	updateBusStatus,
 } from "../controllers/busController.js";
 
 router.route("/").get(getAllBuses).post(createBusInformation);
+router.route("/status").put(updateBusStatus);
 router
 	.route("/:id")
 	.get(getBusById)

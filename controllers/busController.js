@@ -73,10 +73,26 @@ const deleteBusInformation = async (req, res) => {
 	}
 };
 
+const updateBusStatus = async (req, res) => {
+	try {
+		const bus = await Bus.findOne({ busName: req.body.busName });
+		if (!bus) {
+			return res.status(400).json({ message: "Bus not found" });
+		}
+		bus.activeStatus = !bus.activeStatus;
+		await bus.save();
+		res.status(201).json(bus);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+}
+
 export {
 	createBusInformation,
 	deleteBusInformation,
 	updateBusInformation,
 	getAllBuses,
 	getBusById,
+	updateBusStatus,
 };

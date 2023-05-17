@@ -13,7 +13,7 @@ import connectDB from "./db/connect.js";
 import cors from "cors";
 app.use(cors());
 
-import { locationChangeStream } from "./socket/index.js";
+import { busChangeStream, locationChangeStream } from "./socket/index.js";
 import { Server } from "socket.io";
 import http from "http";
 const server = http.createServer(app);
@@ -21,7 +21,13 @@ const io = new Server(server);
 
 io.on("connection", (socket) => {
 	console.log(`Client connected: ${socket.id}`);
-	// locationChangeStream(socket);
+	busChangeStream(socket);
+	locationChangeStream(socket);
+
+	  // Ngắt kết nối của client
+	  socket.on('disconnect', () => {
+		console.log('Client disconnected:', socket.id);
+	  });
 });
 
 //routers
