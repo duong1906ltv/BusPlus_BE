@@ -89,6 +89,28 @@ const getLocationsByBusId = async (req, res) => {
 	}
 };
 
+const updateLocationOfBus = async (req, res) => {
+	try {
+		const busId = await Bus.findOne({ busName: req.body.busName });
+		if (!busId) {
+			return res.status(400).json({ message: "Bus not found" });
+		}
+		const { latitude, longitude } = req.body;
+		const location = await Location.findOne({ busId: busId });
+		if (!location) {
+			return res.status(404).json({ message: "Location not found" });
+		}
+		location.busId = busId;
+		location.latitude = latitude;
+		location.longitude = longitude;
+		await location.save();
+		res.status(200).json(location);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+};
+
 export {
 	getAllLocations,
 	getLocationById,
