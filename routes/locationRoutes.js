@@ -8,6 +8,7 @@ import {
 	createLocation,
 	updateLocationById,
 	deleteLocationById,
+	updateLocationOfBus,
 } from "../controllers/locationController.js";
 
 router.route("/").get(getAllLocations).post(createLocation);
@@ -16,6 +17,7 @@ router
 	.get(getLocationById)
 	.put(updateLocationById)
 	.delete(deleteLocationById);
+router.route("/bus/location").put(updateLocationOfBus);
 router.route("/Busid/:busId").get(getLocationsByBusId);
 
 export default router;

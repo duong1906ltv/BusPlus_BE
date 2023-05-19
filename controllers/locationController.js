@@ -3,7 +3,7 @@ import Location from "../models/Location.js";
 
 const createLocation = async (req, res) => {
 	try {
-		const busId = await Bus.findOne({ busName: req.body.busName });
+		const busId = await Bus.findOne({ busNumber: req.body.busNumber });
 		if (!busId) {
 			return res.status(400).json({ message: "Bus not found" });
 		}
@@ -95,14 +95,14 @@ const updateLocationOfBus = async (req, res) => {
 		if (!busId) {
 			return res.status(400).json({ message: "Bus not found" });
 		}
-		const { latitude, longitude } = req.body;
+		const { lat, lng } = req.body;
 		const location = await Location.findOne({ busId: busId });
 		if (!location) {
 			return res.status(404).json({ message: "Location not found" });
 		}
 		location.busId = busId;
-		location.latitude = latitude;
-		location.longitude = longitude;
+		location.lat = lat;
+		location.lng = lng;
 		await location.save();
 		res.status(200).json(location);
 	} catch (error) {
@@ -118,4 +118,5 @@ export {
 	createLocation,
 	updateLocationById,
 	deleteLocationById,
+	updateLocationOfBus,
 };
