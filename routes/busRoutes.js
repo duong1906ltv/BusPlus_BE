@@ -8,10 +8,12 @@ import {
 	getAllBuses,
 	getBusById,
 	updateBusStatus,
+	getActiveBus,
 } from "../controllers/busController.js";
 
 router.route("/").get(getAllBuses).post(createBusInformation);
 router.route("/status").put(updateBusStatus);
+router.route("/active").get(getActiveBus)
 router
 	.route("/:id")
 	.get(getBusById)

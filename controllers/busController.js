@@ -1,4 +1,5 @@
 import Bus from "../models/Bus.js";
+import Location from "../models/Location.js";
 import Route from "../models/Route.js";
 
 // Lấy danh sách tất cả các xe buýt
@@ -88,6 +89,20 @@ const updateBusStatus = async (req, res) => {
 	}
 }
 
+const getActiveBus = async (req, res) => {
+	try {
+		const bus = await Bus.find({ activeStatus: true });
+		if (!bus) {
+			return res.status(400).json({ message: "Bus not found" });
+		}
+		const location = await Location.findOne({busId: bus})
+		res.status(201).json({bus, location});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+}
+
 export {
 	createBusInformation,
 	deleteBusInformation,
@@ -95,4 +110,5 @@ export {
 	getAllBuses,
 	getBusById,
 	updateBusStatus,
+	getActiveBus,
 };

@@ -5,7 +5,7 @@ import Station from "../models/Station.js"; // Import Station model
 // Phương thức để lấy danh sách tất cả các tuyến xe buýt
 const getAllRoutes = async (req, res) => {
 	try {
-		const routes = await Route.find(); // Lấy danh sách tất cả các tuyến xe buýt từ cơ sở dữ liệu
+		const routes = await Route.find().populate("forwardRoute backwardRoute"); // Lấy danh sách tất cả các tuyến xe buýt từ cơ sở dữ liệu
 		res.status(200).json(routes); // Trả về danh sách các tuyến xe buýt dưới dạng JSON
 	} catch (error) {
 		res.status(500).json({ error: error.message }); // Xử lý lỗi nếu có
