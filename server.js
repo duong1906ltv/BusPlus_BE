@@ -20,40 +20,45 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 io.on("connection", (socket) => {
-	console.log(`Client connected: ${socket.id}`);
-	busChangeStream(socket);
-	locationChangeStream(socket);
+  console.log(`Client connected: ${socket.id}`);
+  busChangeStream(socket);
+  locationChangeStream(socket);
 
-	  // Ngắt kết nối của client
-	  socket.on('disconnect', () => {
-		console.log('Client disconnected:', socket.id);
-	  });
+  // Ngắt kết nối của client
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
 });
 
 //routers
 import routeRoutes from "./routes/routeRoutes.js";
 import stationRoutes from "./routes/stationRoutes.js";
-import scheduleRoute from "./routes/scheduleRoutes.js";
-import busRoute from "./routes/busRoutes.js";
-import locationRoute from "./routes/locationRoutes.js";
+import scheduleRoutes from "./routes/scheduleRoutes.js";
+import busRoutes from "./routes/busRoutes.js";
+import locationRoutes from "./routes/locationRoutes.js";
+import ticketRoutes from "./routes/ticketRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
+app.use("/api/routes", authRoutes);
 app.use("/api/routes", routeRoutes);
 app.use("/api/stations", stationRoutes);
-app.use("/api/schedules", scheduleRoute);
-app.use("/api/buses", busRoute);
-app.use("/api/locations", locationRoute);
+app.use("/api/schedules", scheduleRoutes);
+app.use("/api/buses", busRoutes);
+app.use("/api/locations", locationRoutes);
+app.use("/api/ticket", ticketRoutes);
+app.use("/api/auth", authRoutes);
 
 const port = process.env.PORT || 5000;
 
 const start = async () => {
-	try {
-		await connectDB(process.env.MONGO_URL);
-		server.listen(port, () => {
-			console.log(`Server is listening on port ${port}...`);
-		});
-	} catch (error) {
-		console.log(error);
-	}
+  try {
+    await connectDB(process.env.MONGO_URL);
+    server.listen(port, () => {
+      console.log(`Server is listening on port ${port}...`);
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 start();
