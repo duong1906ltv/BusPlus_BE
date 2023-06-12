@@ -1,19 +1,28 @@
 import User from "../models/User.js";
+import Profile from "../models/Profile.js";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 import bcrypt from "bcryptjs";
 
 const register = async (req, res) => {
-  const { username, email, password } = req.body;
-  if (!username || !email || !password) {
-    throw new BadRequestError("Please provide all values");
+  const { fullname, password, phone } = req.body;
+  if (!fullname || !phone || !password) {
+    res.status(400).json("Please provide all values");
   }
-  const userAlreadyExists = await User.findOne({ email: email });
+  const userAlreadyExists = await User.findOne({ phone: phone });
   if (userAlreadyExists) {
-    throw new BadRequestError("Email already in use");
-    return;
+    res.status(400).json("Please provide all values");
   }
 
-  const user = await User.create({ username, email, password });
+  const user = await User.create({ fullname, phone, password });
+
+  const profile = new Profile({
+    user: user._id,
+    fullname,
+    phone,
+  });
+
+  // Lưu hồ sơ vào cơ sở dữ liệu
+  await profile.save();
   const token = user.createJWT();
   res.status(200).json({
     user: user,

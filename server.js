@@ -38,6 +38,7 @@ import busRoutes from "./routes/busRoutes.js";
 import locationRoutes from "./routes/locationRoutes.js";
 import ticketRoutes from "./routes/ticketRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
 
 app.use("/api/routes", authRoutes);
 app.use("/api/routes", routeRoutes);
@@ -47,6 +48,7 @@ app.use("/api/buses", busRoutes);
 app.use("/api/locations", locationRoutes);
 app.use("/api/ticket", ticketRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
 
 const port = process.env.PORT || 5000;
 
