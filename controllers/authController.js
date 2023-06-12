@@ -30,19 +30,24 @@ const register = async (req, res) => {
   });
 };
 const login = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email }).select("+password");
-  if (!user) {
-    throw new UnAuthenticatedError("Invalid Credentials");
-  }
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) {
+      return res.status(401).json("Invalid Credentials");
+    }
 
-  const isPasswordCorrect = await user.comparePassword(password);
-  if (!isPasswordCorrect) {
-    throw new UnAuthenticatedError("Invalid Credentials");
+    const isPasswordCorrect = await user.comparePassword(password);
+    if (!isPasswordCorrect) {
+      return res.status(401).json("Invalid Credentials");
+    }
+    const token = user.createJWT();
+    user.password = undefined;
+    res.status(200).json({ user, token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error." });
   }
-  const token = user.createJWT();
-  user.password = undefined;
-  res.status(200).json({ user, token });
 };
 
 const getAllAccounts = async (req, res) => {
