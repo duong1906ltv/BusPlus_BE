@@ -1,22 +1,36 @@
 import Profile from "../models/Profile.js";
 import User from "../models/User.js";
 
+const getProfileById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const profile = await Profile.findOne({ user: userId });
+    if (!profile) {
+      return res.status(404).json({ message: "Profile is not exist" });
+    }
+    res.status(200).json(profile);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Cập nhật hồ sơ
 const updateProfile = async (req, res) => {
   try {
-    const { fullName, email, phone, address, dateOfBirth, avatar, gender } =
+    const { fullname, email, phone, address, dateOfBirth, avatar, gender } =
       req.body;
-    const userId = req.params.userId;
+
+    const userId = req.user.userId;
 
     // Kiểm tra xem hồ sơ có tồn tại hay không
     const existingProfile = await Profile.findOne({ user: userId });
 
     if (!existingProfile) {
-      return res.status(404).json({ message: "Hồ sơ không tồn tại" });
+      return res.status(404).json({ message: "Profile is not exist" });
     }
 
     // Cập nhật thông tin hồ sơ
-    existingProfile.fullName = fullName;
+    existingProfile.fullname = fullname;
     existingProfile.email = email;
     existingProfile.phone = phone;
     existingProfile.address = address;
@@ -30,7 +44,7 @@ const updateProfile = async (req, res) => {
     res.status(200).json(updatedProfile);
   } catch (error) {
     res.status(500).json({
-      message: "Đã xảy ra lỗi khi cập nhật hồ sơ",
+      message: "Đã xảy ra lỗi khi cập nhật profile",
       error: error.message,
     });
   }
@@ -114,4 +128,10 @@ const deleteFriend = async (req, res) => {
   }
 };
 
-export { updateProfile, getAllProfile, addFriend, deleteFriend };
+export {
+  updateProfile,
+  getAllProfile,
+  addFriend,
+  deleteFriend,
+  getProfileById,
+};
