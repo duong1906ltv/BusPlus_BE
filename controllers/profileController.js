@@ -8,7 +8,7 @@ const getProfileById = async (req, res) => {
     if (!profile) {
       return res.status(404).json({ message: "Profile is not exist" });
     }
-    res.status(200).json(profile);
+    res.status(200).json({ profile });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
