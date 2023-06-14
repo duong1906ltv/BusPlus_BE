@@ -5,7 +5,9 @@ import FriendRequest from "../models/FriendRequest.js";
 const getProfileById = async (req, res) => {
   try {
     const { userId } = req.params;
-    const profile = await Profile.findOne({ user: userId });
+    const profile = await Profile.findOne({ user: userId }).populate(
+      "friends.user"
+    );
     if (!profile) {
       return res.status(404).json({ message: "Profile is not exist" });
     }
@@ -205,13 +207,13 @@ const acceptRequest = async (req, res) => {
 
     // Thêm user vào danh sách bạn bè
     const senderProfile = await Profile.findOne({ user: request.senderId });
-    senderProfile.friends.push(request.recipientId);
+    senderProfile.friends.push({ user: request.recipientId });
     await senderProfile.save();
 
     const recipientProfile = await Profile.findOne({
       user: request.recipientId,
     });
-    recipientProfile.friends.push(request.senderId);
+    recipientProfile.friends.push({ user: request.senderId });
     await recipientProfile.save();
 
     await FriendRequest.findByIdAndRemove(requestId);
@@ -253,6 +255,35 @@ const freezeUser = async (req, res) => {
     const profile = await Profile.findOneAndUpdate(
       { user: userId, friends: { $elemMatch: { user: friendId } } },
       { $set: { "friends.$.status": "freeze" } },
+      { new: true }
+    );
+
+    if (!profile) {
+      return res.status(400).json({ error: "Friend not found" });
+    }
+
+    return res.status(200).json({ message: "Status updated to freeze" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
+const activeUser = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { friendId } = req.params.id;
+
+    // Kiểm tra xem người dùng tồn tại hay không
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({ error: "Invalid user" });
+    }
+
+    // Tìm và cập nhật trạng thái của bạn bè thành "freeze"
+    const profile = await Profile.findOneAndUpdate(
+      { user: userId, friends: { $elemMatch: { user: friendId } } },
+      { $set: { "friends.$.status": "active" } },
       { new: true }
     );
 

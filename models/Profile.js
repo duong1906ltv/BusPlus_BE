@@ -43,7 +43,7 @@ const profileSchema = new mongoose.Schema({
       },
       status: {
         type: String,
-        enum: ["active", "freezed"],
+        enum: ["active", "freeze"],
         default: "active",
       },
     },
