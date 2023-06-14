@@ -5,9 +5,7 @@ import FriendRequest from "../models/FriendRequest.js";
 const getProfileById = async (req, res) => {
   try {
     const { userId } = req.params;
-    const profile = await Profile.findOne({ user: userId }).populate(
-      "friends.user"
-    );
+    const profile = await Profile.findOne({ user: userId });
     if (!profile) {
       return res.status(404).json({ message: "Profile is not exist" });
     }
@@ -207,13 +205,21 @@ const acceptRequest = async (req, res) => {
 
     // Thêm user vào danh sách bạn bè
     const senderProfile = await Profile.findOne({ user: request.senderId });
-    senderProfile.friends.push({ user: request.recipientId });
-    await senderProfile.save();
 
     const recipientProfile = await Profile.findOne({
       user: request.recipientId,
     });
-    recipientProfile.friends.push({ user: request.senderId });
+
+    senderProfile.friends.push({
+      user: request.recipientId,
+      profile: recipientProfile,
+    });
+    await senderProfile.save();
+
+    recipientProfile.friends.push({
+      user: request.senderId,
+      profile: senderProfile,
+    });
     await recipientProfile.save();
 
     await FriendRequest.findByIdAndRemove(requestId);
@@ -291,7 +297,31 @@ const activeUser = async (req, res) => {
       return res.status(400).json({ error: "Friend not found" });
     }
 
-    return res.status(200).json({ message: "Status updated to freeze" });
+    return res.status(200).json({ message: "Status updated to active" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
+const getListFriend = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    // Lấy thông tin hồ sơ của người dùng và populate danh sách bạn bè,
+    // sau đó populate thông tin avatar cho từng bạn bè
+    const profile = await Profile.findOne({ user: userId }).populate({
+      path: "friends.profile",
+    });
+
+    if (!profile) {
+      return res.status(404).json({ error: "Profile not found" });
+    }
+
+    const friends = profile.friends.map((friend) => ({
+      profile: friend.profile,
+    }));
+
+    return res.status(200).json(friends);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Server error" });
@@ -307,4 +337,6 @@ export {
   acceptRequest,
   rejectRequest,
   freezeUser,
+  getListFriend,
+  activeUser,
 };

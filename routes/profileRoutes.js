@@ -10,6 +10,8 @@ import {
   acceptRequest,
   rejectRequest,
   freezeUser,
+  getListFriend,
+  activeUser,
 } from "../controllers/profileController.js";
 import authenticateUser from "../middleware/auth.js";
 
@@ -19,6 +21,8 @@ router.route("/send-request").post(authenticateUser, sendFriendRequest);
 router.route("/accept-request/:id").post(acceptRequest);
 router.route("/reject-request/:id").post(rejectRequest);
 router.route("/freeze/:id").post(authenticateUser, freezeUser);
+router.route("/active/:id").post(authenticateUser, activeUser);
+router.route("/get-friends/:id").get(getListFriend);
 router.route("/delete-friend/:friendId").delete(authenticateUser, deleteFriend);
 
 export default router;

@@ -46,6 +46,10 @@ const profileSchema = new mongoose.Schema({
         enum: ["active", "freeze"],
         default: "active",
       },
+      profile: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Profile",
+      },
     },
   ],
 });
