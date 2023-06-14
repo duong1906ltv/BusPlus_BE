@@ -32,19 +32,22 @@ const profileSchema = new mongoose.Schema({
     required: false,
   },
   avatar: {
-    type: String, // Assuming you store the avatar as a URL or file path
-    required: false, // Make it optional if you allow profiles without avatars
+    type: String,
+    required: false,
   },
   friends: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      status: {
+        type: String,
+        enum: ["active", "freezed"],
+        default: "active",
+      },
     },
   ],
-  //   createdAt: {
-  //     type: Date,
-  //     default: Date.now,
-  //   },
 });
 
 export default mongoose.model("Profile", profileSchema);

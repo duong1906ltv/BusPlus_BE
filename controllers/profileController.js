@@ -1,5 +1,6 @@
 import Profile from "../models/Profile.js";
 import User from "../models/User.js";
+import FriendRequest from "../models/FriendRequest.js";
 
 const getProfileById = async (req, res) => {
   try {
@@ -59,41 +60,41 @@ const getAllProfile = async (req, res) => {
   }
 };
 
-const addFriend = async (req, res) => {
-  const { email, phone } = req.body;
+// const addFriend = async (req, res) => {
+//   const { email, phone } = req.body;
 
-  try {
-    let user = null;
+//   try {
+//     let user = null;
 
-    // Kiểm tra nếu số điện thoại được cung cấp
-    if (phone) {
-      user = await User.findOne({ phone });
-    }
-    // Kiểm tra nếu email được cung cấp và không tìm thấy user qua số điện thoại
-    if (email && !user) {
-      user = await User.findOne({ email });
-    }
+//     // Kiểm tra nếu số điện thoại được cung cấp
+//     if (phone) {
+//       user = await User.findOne({ phone });
+//     }
+//     // Kiểm tra nếu email được cung cấp và không tìm thấy user qua số điện thoại
+//     if (email && !user) {
+//       user = await User.findOne({ email });
+//     }
 
-    // Kiểm tra nếu không tìm thấy user
-    if (!user) {
-      return res.status(404).json({ message: "User not found." });
-    }
+//     // Kiểm tra nếu không tìm thấy user
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found." });
+//     }
 
-    // Thêm user vào danh sách bạn bè
-    const myprofile = await Profile.findOne({ user: req.user.userId });
-    myprofile.friends.push(user._id);
-    await myprofile.save();
+//     // Thêm user vào danh sách bạn bè
+//     const myprofile = await Profile.findOne({ user: req.user.userId });
+//     myprofile.friends.push(user._id);
+//     await myprofile.save();
 
-    const friendProfile = await Profile.findOne({ phone: phone });
-    friendProfile.friends.push(req.user.userId);
-    await friendProfile.save();
+//     const friendProfile = await Profile.findOne({ phone: phone });
+//     friendProfile.friends.push(req.user.userId);
+//     await friendProfile.save();
 
-    res.json({ message: "Friend added successfully." });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error." });
-  }
-};
+//     res.json({ message: "Friend added successfully." });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error." });
+//   }
+// };
 
 const deleteFriend = async (req, res) => {
   const { friendId } = req.params;
@@ -101,7 +102,15 @@ const deleteFriend = async (req, res) => {
   try {
     // Kiểm tra xem người dùng hiện tại đã có trong cơ sở dữ liệu chưa
     const currentUserProfile = await Profile.findOne({ user: req.user.userId });
+    const friendProfile = await Profile.findOne({ user: friendId });
+
     if (!currentUserProfile) {
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy thông tin người dùng." });
+    }
+
+    if (!friendProfile) {
       return res
         .status(404)
         .json({ message: "Không tìm thấy thông tin người dùng." });
@@ -119,7 +128,13 @@ const deleteFriend = async (req, res) => {
     currentUserProfile.friends = currentUserProfile.friends.filter(
       (friend) => friend.toString() !== friendId
     );
+
+    friendProfile.friends = friendProfile.friends.filter(
+      (friend) => friend.toString() !== req.user.userId
+    );
+
     await currentUserProfile.save();
+    await friendProfile.save();
 
     res.status(200).json({ message: "Xóa bạn bè thành công." });
   } catch (error) {
@@ -128,10 +143,137 @@ const deleteFriend = async (req, res) => {
   }
 };
 
+const sendFriendRequest = async (req, res) => {
+  try {
+    const phone = req.body.phone;
+    const recipientId = await User.findOne({ phone: phone });
+
+    const senderId = req.user.userId;
+
+    // Kiểm tra xem yêu cầu đã tồn tại hay chưa
+    const existingRequest = await FriendRequest.findOne({
+      senderId,
+      recipientId,
+    });
+
+    if (existingRequest) {
+      return res.status(400).json({ error: "Friend request already sent" });
+    }
+
+    // Kiểm tra xem đã là bạn bè hay chưa
+    const areFriends = await Profile.exists({
+      user: senderId,
+      friends: { $elemMatch: { user: recipientId } },
+    });
+
+    if (areFriends) {
+      return res.status(400).json({ error: "Already friends" });
+    }
+
+    // Kiểm tra xem người gửi và người nhận tồn tại hay không
+    const sender = await User.findById(senderId);
+    const recipient = await User.findById(recipientId);
+
+    if (!sender || !recipient) {
+      return res.status(400).json({ error: "Invalid user" });
+    }
+
+    // Tạo yêu cầu kết bạn mới
+    const newRequest = new FriendRequest({
+      senderId,
+      recipientId,
+    });
+    await newRequest.save();
+
+    return res
+      .status(200)
+      .json({ message: "Friend request sent successfully" });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
+const acceptRequest = async (req, res) => {
+  try {
+    const requestId = req.params.id;
+    const request = await FriendRequest.findById(requestId);
+
+    if (!request) {
+      return res.status(400).json({ error: "Request not found" });
+    }
+
+    // Thêm user vào danh sách bạn bè
+    const senderProfile = await Profile.findOne({ user: request.senderId });
+    senderProfile.friends.push(request.recipientId);
+    await senderProfile.save();
+
+    const recipientProfile = await Profile.findOne({
+      user: request.recipientId,
+    });
+    recipientProfile.friends.push(request.senderId);
+    await recipientProfile.save();
+
+    await FriendRequest.findByIdAndRemove(requestId);
+    res.json({ message: "Friend added successfully." });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
+const rejectRequest = async (req, res) => {
+  try {
+    const requestId = req.body.id;
+    const request = FriendRequest.findById(requestId);
+
+    if (!request) {
+      return res.status(400).json({ error: "Request not found" });
+    }
+    await FriendRequest.findByIdAndRemove(requestId);
+    res.json({ message: "Friend request rejected." });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
+const freezeUser = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { friendId } = req.params.id;
+
+    // Kiểm tra xem người dùng tồn tại hay không
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({ error: "Invalid user" });
+    }
+
+    // Tìm và cập nhật trạng thái của bạn bè thành "freeze"
+    const profile = await Profile.findOneAndUpdate(
+      { user: userId, friends: { $elemMatch: { user: friendId } } },
+      { $set: { "friends.$.status": "freeze" } },
+      { new: true }
+    );
+
+    if (!profile) {
+      return res.status(400).json({ error: "Friend not found" });
+    }
+
+    return res.status(200).json({ message: "Status updated to freeze" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
 export {
   updateProfile,
   getAllProfile,
-  addFriend,
   deleteFriend,
   getProfileById,
+  sendFriendRequest,
+  acceptRequest,
+  rejectRequest,
+  freezeUser,
 };
