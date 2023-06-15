@@ -232,7 +232,9 @@ const acceptRequest = async (req, res) => {
 const getRequestById = async (req, res) => {
   try {
     const userId = req.params.id;
-    const request = await FriendRequest.find({ recipientId: userId });
+    const request = await FriendRequest.find({ recipientId: userId }).populate(
+      "senderId"
+    );
     res.status(200).json(request);
   } catch (error) {
     console.error(error.message);
