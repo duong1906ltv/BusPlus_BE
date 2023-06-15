@@ -7,7 +7,7 @@ const getProfileById = async (req, res) => {
     const { userId } = req.params;
     const profile = await Profile.findOne({ user: userId });
     if (!profile) {
-      return res.status(404).json({ message: "Profile is not exist" });
+      return res.status(404).json({ error: "Profile is not exist" });
     }
     res.status(200).json({ profile });
   } catch (error) {
@@ -27,7 +27,7 @@ const updateProfile = async (req, res) => {
     const existingProfile = await Profile.findOne({ user: userId });
 
     if (!existingProfile) {
-      return res.status(404).json({ message: "Profile is not exist" });
+      return res.status(404).json({ error: "Profile is not exist" });
     }
 
     // Cập nhật thông tin hồ sơ
@@ -45,8 +45,7 @@ const updateProfile = async (req, res) => {
     res.status(200).json(updatedProfile);
   } catch (error) {
     res.status(500).json({
-      message: "Đã xảy ra lỗi khi cập nhật profile",
-      error: error.message,
+      error: "Đã xảy ra lỗi khi cập nhật profile",
     });
   }
 };
@@ -107,13 +106,13 @@ const deleteFriend = async (req, res) => {
     if (!currentUserProfile) {
       return res
         .status(404)
-        .json({ message: "Không tìm thấy thông tin người dùng." });
+        .json({ error: "Không tìm thấy thông tin người dùng." });
     }
 
     if (!friendProfile) {
       return res
         .status(404)
-        .json({ message: "Không tìm thấy thông tin người dùng." });
+        .json({ error: "Không tìm thấy thông tin người dùng." });
     }
 
     // Kiểm tra xem người bạn đã tồn tại trong danh sách bạn bè hay chưa
@@ -121,7 +120,7 @@ const deleteFriend = async (req, res) => {
     if (!isFriend) {
       return res
         .status(400)
-        .json({ message: "Người bạn không tồn tại trong danh sách bạn bè." });
+        .json({ error: "Người bạn không tồn tại trong danh sách bạn bè." });
     }
 
     // Xóa friendId khỏi danh sách bạn bè của người dùng hiện tại
@@ -139,7 +138,7 @@ const deleteFriend = async (req, res) => {
     res.status(200).json({ message: "Xóa bạn bè thành công." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Đã xảy ra lỗi server." });
+    res.status(500).json({ error: "Đã xảy ra lỗi server." });
   }
 };
 
@@ -223,7 +222,18 @@ const acceptRequest = async (req, res) => {
     await recipientProfile.save();
 
     await FriendRequest.findByIdAndRemove(requestId);
-    res.json({ message: "Friend added successfully." });
+    res.status(200).json({ message: "Friend added successfully." });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
+const getRequestById = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const request = await FriendRequest.find({ recipientId: userId });
+    res.status(200).json(request);
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({ error: "Server error" });
@@ -239,7 +249,7 @@ const rejectRequest = async (req, res) => {
       return res.status(400).json({ error: "Request not found" });
     }
     await FriendRequest.findByIdAndRemove(requestId);
-    res.json({ message: "Friend request rejected." });
+    res.status(200).json({ message: "Friend request rejected." });
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({ error: "Server error" });
@@ -339,4 +349,5 @@ export {
   freezeUser,
   getListFriend,
   activeUser,
+  getRequestById,
 };
