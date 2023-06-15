@@ -153,12 +153,23 @@ const sendFriendRequest = async (req, res) => {
 
     // Kiểm tra xem yêu cầu đã tồn tại hay chưa
     const existingRequest = await FriendRequest.findOne({
-      senderId,
-      recipientId,
+      senderId: senderId,
+      recipientId: recipientId,
     });
 
     if (existingRequest) {
       return res.status(400).json({ error: "Friend request already sent" });
+    }
+
+    const receivedRequest = await FriendRequest.findOne({
+      senderId: recipientId,
+      recipientId: senderId,
+    });
+
+    if (receivedRequest) {
+      return res.status(400).json({
+        error: "You have been received friend request from this user",
+      });
     }
 
     // Kiểm tra xem đã là bạn bè hay chưa
