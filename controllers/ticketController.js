@@ -58,6 +58,25 @@ const getTicketById = async (req, res) => {
   }
 };
 
+// Lấy danh sách tất cả các vé
+const getAllTicketsOfUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const tickets = await Ticket.find({ user: userId })
+      .populate({
+        path: "user",
+        populate: {
+          path: "profile",
+          model: "Profile",
+        },
+      })
+      .exec();
+    res.status(200).json(tickets);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Cập nhật thông tin một vé
 const updateTicket = async (req, res) => {
   const { priority, ticketType, month, year } = req.body;
@@ -139,4 +158,5 @@ export {
   getTicketById,
   updateTicket,
   generateUserTicketQRCode,
+  getAllTicketsOfUser,
 };
