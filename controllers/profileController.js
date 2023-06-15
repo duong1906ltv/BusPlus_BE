@@ -224,7 +224,16 @@ const acceptRequest = async (req, res) => {
     await recipientProfile.save();
 
     await FriendRequest.findByIdAndRemove(requestId);
-    res.status(200).json({ message: "Friend added successfully." });
+    const updatedRequest = await FriendRequest.find()
+      .populate({
+        path: "senderId",
+        populate: {
+          path: "profile",
+          model: "Profile",
+        },
+      })
+      .exec();
+    res.status(200).json(updatedRequest);
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({ error: "Server error" });
@@ -266,7 +275,16 @@ const rejectRequest = async (req, res) => {
       return res.status(400).json({ error: "Request not found" });
     }
     await FriendRequest.findByIdAndRemove(requestId);
-    res.status(200).json({ message: "Friend request rejected." });
+    const updatedRequest = await FriendRequest.find()
+      .populate({
+        path: "senderId",
+        populate: {
+          path: "profile",
+          model: "Profile",
+        },
+      })
+      .exec();
+    res.status(200).json(updatedRequest);
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({ error: "Server error" });
