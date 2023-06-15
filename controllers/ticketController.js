@@ -15,11 +15,10 @@ const getAllTickets = async (req, res) => {
 const createTicket = async (req, res) => {
   const { user, priority, ticketType, month, year } = req.body;
 
-  // Lấy số lượng vé đã tạo từ cơ sở dữ liệu
-  const count = await Ticket.countDocuments();
+  const lastTicket = await Ticket.findOne().sort({ $natural: -1 });
 
-  // Tạo mã vé theo dạng số vé và số thứ tự
-  const ticketCode = generateTicketCode(count);
+  const ticketNumber = Number(lastTicket.ticketCode) + 1;
+  const ticketCode = ticketNumber.toString().padStart(8, "0");
 
   const ticket = new Ticket({
     user,
@@ -70,6 +69,7 @@ const getAllTicketsOfUser = async (req, res) => {
           model: "Profile",
         },
       })
+      .sort({ $natural: -1 })
       .exec();
     res.status(200).json(tickets);
   } catch (error) {
