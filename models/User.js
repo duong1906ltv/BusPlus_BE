@@ -26,6 +26,10 @@ const UserSchema = new mongoose.Schema({
     minlength: 6,
     select: false,
   },
+  profile: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Profile",
+  },
 });
 
 UserSchema.pre("save", async function () {

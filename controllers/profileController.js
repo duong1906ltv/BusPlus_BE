@@ -232,10 +232,25 @@ const acceptRequest = async (req, res) => {
 const getRequestById = async (req, res) => {
   try {
     const userId = req.params.id;
-    const request = await FriendRequest.find({ recipientId: userId }).populate(
-      "senderId"
-    );
-    res.status(200).json(request);
+    const request = await FriendRequest.find({ recipientId: userId })
+      .populate({
+        path: "senderId",
+        populate: {
+          path: "profile",
+          model: "Profile",
+        },
+      })
+      .exec();
+
+    console.log(request);
+
+    // Lấy thông tin avatar của senderId
+    const populatedRequest = request.map((req) => ({
+      ...req.toObject(),
+      senderAvatar: req.senderId.profile.avatar,
+    }));
+
+    res.status(200).json(populatedRequest);
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({ error: "Server error" });
