@@ -20,6 +20,6 @@ router
   .get(getTicketById)
   .patch(updateTicket)
   .delete(deleteTicket);
-router.route("/qrcode").post(authenticateUser, generateUserTicketQRCode);
+router.route("/qrcode/:id").post(generateUserTicketQRCode);
 
 export default router;

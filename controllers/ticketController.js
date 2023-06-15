@@ -118,7 +118,7 @@ const deleteTicket = async (req, res) => {
 
 // Sinh QR code cho vé của người dùng đang đăng nhập
 const generateUserTicketQRCode = async (req, res) => {
-  const user = req.user.userId; // Lấy ID của người dùng từ session hoặc token
+  const user = req.params.id; // Lấy ID của người dùng từ session hoặc token
 
   try {
     // Tìm vé của người dùng trong cơ sở dữ liệu
@@ -144,7 +144,7 @@ const generateUserTicketQRCode = async (req, res) => {
         return qrCode;
       })
     );
-    return res.json({ qrCodes });
+    return res.json(qrCodes);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Đã xảy ra lỗi" });
