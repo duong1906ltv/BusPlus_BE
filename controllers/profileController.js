@@ -116,7 +116,9 @@ const deleteFriend = async (req, res) => {
     }
 
     // Kiểm tra xem người bạn đã tồn tại trong danh sách bạn bè hay chưa
-    const isFriend = currentUserProfile.friends.includes(friendId);
+    const isFriend = currentUserProfile.friends.some(
+      (friend) => friend.user.toString() === friendId
+    );
     if (!isFriend) {
       return res
         .status(400)
@@ -125,11 +127,11 @@ const deleteFriend = async (req, res) => {
 
     // Xóa friendId khỏi danh sách bạn bè của người dùng hiện tại
     currentUserProfile.friends = currentUserProfile.friends.filter(
-      (friend) => friend.toString() !== friendId
+      (friend) => friend.user.toString() !== friendId
     );
 
     friendProfile.friends = friendProfile.friends.filter(
-      (friend) => friend.toString() !== req.user.userId
+      (friend) => friend.user.toString() !== req.user.userId
     );
 
     await currentUserProfile.save();
