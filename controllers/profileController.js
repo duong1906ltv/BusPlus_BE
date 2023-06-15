@@ -244,8 +244,6 @@ const getRequestById = async (req, res) => {
       })
       .exec();
 
-    console.log(request);
-
     // Lấy thông tin avatar của senderId
     const populatedRequest = request.map((req) => ({
       ...req.toObject(),
@@ -261,8 +259,8 @@ const getRequestById = async (req, res) => {
 
 const rejectRequest = async (req, res) => {
   try {
-    const requestId = req.body.id;
-    const request = FriendRequest.findById(requestId);
+    const requestId = req.params.id;
+    const request = await FriendRequest.findById(requestId);
 
     if (!request) {
       return res.status(400).json({ error: "Request not found" });
