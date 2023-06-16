@@ -21,6 +21,8 @@ const register = async (req, res) => {
     phone,
   });
 
+  user.profile = profile;
+
   // Lưu hồ sơ vào cơ sở dữ liệu
   await profile.save();
   const token = user.createJWT();
@@ -32,7 +34,9 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { phone, password } = req.body;
-    const user = await User.findOne({ phone }).select("+password");
+    const user = await User.findOne({ phone })
+      .select("+password")
+      .populate("profile");
     if (!user) {
       return res.status(401).json("Invalid Credentials");
     }
