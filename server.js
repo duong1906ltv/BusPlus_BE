@@ -13,7 +13,11 @@ import connectDB from "./db/connect.js";
 import cors from "cors";
 app.use(cors());
 
-import { busChangeStream, locationChangeStream } from "./socket/index.js";
+import {
+  busChangeStream,
+  locationChangeStream,
+  checkInStream,
+} from "./socket/index.js";
 import { Server } from "socket.io";
 import http from "http";
 const server = http.createServer(app);
@@ -23,6 +27,7 @@ io.on("connection", (socket) => {
   console.log(`Client connected: ${socket.id}`);
   busChangeStream(socket);
   locationChangeStream(socket);
+  checkInStream(socket);
 
   // Ngắt kết nối của client
   socket.on("disconnect", () => {
@@ -39,6 +44,7 @@ import locationRoutes from "./routes/locationRoutes.js";
 import ticketRoutes from "./routes/ticketRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
+import checkInRoutes from "./routes/checkInRoutes.js";
 
 app.use("/api/routes", authRoutes);
 app.use("/api/routes", routeRoutes);
@@ -49,6 +55,7 @@ app.use("/api/locations", locationRoutes);
 app.use("/api/ticket", ticketRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/checkin", checkInRoutes);
 
 const port = process.env.PORT || 5000;
 
