@@ -373,7 +373,10 @@ const getListFriend = async (req, res) => {
       return res.status(404).json({ error: "Profile not found" });
     }
 
+    console.log(profile.friends);
+
     const friends = profile.friends.map((friend) => ({
+      status: friend.status,
       profile: friend.profile,
     }));
 
