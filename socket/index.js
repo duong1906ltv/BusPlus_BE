@@ -48,8 +48,11 @@ export const checkInStream = (socket) => {
     console.log(change.operationType);
     if (change.operationType === "insert") {
       const lastCheckin = await CheckIn.findOne().sort({ $natural: -1 });
-      if (lastCheckin.status === "beforeCheckIn") {
-        socket.emit("beforeCheckIn", lastCheckin);
+      if (lastCheckin.status === "CheckIn") {
+        socket.emit("CheckIn", lastCheckin);
+      }
+      if (lastCheckin.status === "CheckOut") {
+        socket.emit("CheckOut", lastCheckin);
       }
     }
     // if (change.operationType === 'update') {
