@@ -9,7 +9,7 @@ const checkInSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["beforeCheckIn", "checkIn", "checkOut"],
+    enum: ["beforeCheckIn", "CheckIn", "CheckOut"],
   },
   lat: {
     type: Number,
