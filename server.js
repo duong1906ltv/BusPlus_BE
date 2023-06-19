@@ -46,7 +46,7 @@ import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import checkInRoutes from "./routes/checkInRoutes.js";
 
-app.use("/api/routes", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/routes", routeRoutes);
 app.use("/api/stations", stationRoutes);
 app.use("/api/schedules", scheduleRoutes);

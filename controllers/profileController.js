@@ -305,7 +305,7 @@ const rejectRequest = async (req, res) => {
 const freezeUser = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { friendId } = req.params.id;
+    const friendId = req.params.id;
 
     // Kiểm tra xem người dùng tồn tại hay không
     const user = await User.findById(userId);
@@ -334,7 +334,7 @@ const freezeUser = async (req, res) => {
 const activeUser = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { friendId } = req.params.id;
+    const friendId = req.params.id;
 
     // Kiểm tra xem người dùng tồn tại hay không
     const user = await User.findById(userId);
