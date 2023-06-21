@@ -21,11 +21,11 @@ const register = async (req, res) => {
     phone,
   });
 
-  user.profile = profile;
-
   // Lưu hồ sơ vào cơ sở dữ liệu
   await profile.save();
   const token = user.createJWT();
+
+  await User.findByIdAndUpdate(user._id, { $set: { profile: profile } });
   res.status(200).json({
     user: user,
     token,
