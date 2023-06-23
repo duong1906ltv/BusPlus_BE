@@ -58,4 +58,50 @@ const getFollowStatus = async (req, res) => {
   }
 };
 
-export { getAllCheckIns, createCheckIn, getFollowStatus };
+const getFriendsCheckInStatus = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const userProfile = await Profile.findOne({ user: userId }).populate(
+      "friends.user"
+    );
+
+    if (!userProfile) {
+      return res.status(404).json({ message: "User profile not found" });
+    }
+
+    const friendCheckInStatus = [];
+
+    for (const friend of userProfile.friends) {
+      const friendProfile = await Profile.findOne({ user: friend.user });
+
+      if (friendProfile.status !== "freeze") {
+        const friendCheckIn = await CheckIn.findOne({
+          user: friend.user,
+          status: "CheckIn",
+        }).sort({ createdAt: -1 });
+
+        if (friendCheckIn) {
+          friendCheckInStatus.push({
+            friend: friend.user,
+            status: friendCheckIn.status,
+            lat: friendCheckIn.lat,
+            lng: friendCheckIn.lng,
+          });
+        }
+      }
+    }
+
+    res.status(200).json({ friendCheckInStatus });
+  } catch (error) {
+    console.error("Error getting friends check-in status:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export {
+  getAllCheckIns,
+  createCheckIn,
+  getFollowStatus,
+  getFriendsCheckInStatus,
+};
