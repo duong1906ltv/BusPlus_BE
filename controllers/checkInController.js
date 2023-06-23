@@ -78,7 +78,6 @@ const getFriendsCheckInStatus = async (req, res) => {
       if (friendProfile.status !== "freeze") {
         const friendCheckIn = await CheckIn.findOne({
           user: friend.user,
-          status: "CheckIn",
         }).sort({ createdAt: -1 });
 
         if (friendCheckIn) {

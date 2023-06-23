@@ -1,15 +1,11 @@
 import mongoose from "mongoose";
 
 // Định nghĩa schema cho thông tin xe buýt (bus)
-const checkInSchema = new mongoose.Schema({
-  user: {
+const checkInLocationSchema = new mongoose.Schema({
+  checkinId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "CheckIn",
     required: true,
-  },
-  status: {
-    type: String,
-    enum: ["Checking", "CheckIn", "CheckOut"],
   },
   lat: {
     type: Number,
@@ -23,4 +19,4 @@ const checkInSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("CheckIn", checkInSchema);
+export default mongoose.model("CheckInLocation", checkInLocationSchema);
