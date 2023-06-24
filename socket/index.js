@@ -64,7 +64,7 @@ export const checkInLocationStream = (socket) => {
     if (change.operationType === "insert") {
       const lastCheckin = await CheckInLocation.findOne()
         .sort({ $natural: -1 })
-        .populate("checkinId");
+        .populate("checkinId user");
 
       socket.emit("startHearingLocationOfUser", lastCheckin);
     }
@@ -73,7 +73,7 @@ export const checkInLocationStream = (socket) => {
       // Truy vấn MongoDB để lấy document mới nhất
       const updatedDocument = await CheckInLocation.findById(
         documentId
-      ).populate("checkinId");
+      ).populate("checkinId user");
       // Cập nhật vị trí của biểu tượng xe buýt trên bản đồ
       socket.emit("updateLocationOfUser", updatedDocument);
     }
