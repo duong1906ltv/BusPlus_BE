@@ -55,25 +55,27 @@ export const checkInStream = (socket) => {
         socket.emit("CheckOut", lastCheckin);
       }
     }
+  });
+};
 
-    const checkInLocationStream = CheckInLocation.watch();
-    checkInLocationStream.on("change", async (change) => {
-      if (change.operationType === "insert") {
-        const lastCheckin = await CheckIn.findOne()
-          .sort({ $natural: -1 })
-          .populate("checkinId");
+export const checkInLocationStream = (socket) => {
+  const checkInLocationStream = CheckInLocation.watch();
+  checkInLocationStream.on("change", async (change) => {
+    if (change.operationType === "insert") {
+      const lastCheckin = await CheckInLocation.findOne()
+        .sort({ $natural: -1 })
+        .populate("checkinId");
 
-        socket.emit("startHearingLocationOfUser", lastCheckin);
-      }
-      if (change.operationType === "update") {
-        const documentId = change.documentKey._id;
-        // Truy vấn MongoDB để lấy document mới nhất
-        const updatedDocument = await CheckInLocation.findById(
-          documentId
-        ).populate("checkinId");
-        // Cập nhật vị trí của biểu tượng xe buýt trên bản đồ
-        socket.emit("updateLocationOfUser", updatedDocument);
-      }
-    });
+      socket.emit("startHearingLocationOfUser", lastCheckin);
+    }
+    if (change.operationType === "update") {
+      const documentId = change.documentKey._id;
+      // Truy vấn MongoDB để lấy document mới nhất
+      const updatedDocument = await CheckInLocation.findById(
+        documentId
+      ).populate("checkinId");
+      // Cập nhật vị trí của biểu tượng xe buýt trên bản đồ
+      socket.emit("updateLocationOfUser", updatedDocument);
+    }
   });
 };

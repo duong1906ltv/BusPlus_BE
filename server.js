@@ -17,6 +17,7 @@ import {
   busChangeStream,
   locationChangeStream,
   checkInStream,
+  checkInLocationStream,
 } from "./socket/index.js";
 import { Server } from "socket.io";
 import http from "http";
@@ -28,6 +29,7 @@ io.on("connection", (socket) => {
   busChangeStream(socket);
   locationChangeStream(socket);
   checkInStream(socket);
+  checkInLocationStream(socket);
 
   // Ngắt kết nối của client
   socket.on("disconnect", () => {

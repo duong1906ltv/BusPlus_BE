@@ -3,7 +3,7 @@ import CheckInLocation from "../models/CheckInLocation.js";
 // Lấy danh sách tất cả các vé
 const getAllCheckInLocations = async (req, res) => {
   try {
-    const checkIns = await CheckInLocation.find();
+    const checkIns = await CheckInLocation.find().populate("checkinId");
     res.status(200).json(checkIns);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -29,7 +29,6 @@ const createCheckInLocation = async (req, res) => {
         lng,
       });
     }
-    console.log(checkInLocation);
 
     const updatedCheckInLocation = await checkInLocation.save();
     res.status(201).json(updatedCheckInLocation);
