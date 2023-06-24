@@ -51,6 +51,9 @@ export const checkInStream = (socket) => {
       if (lastCheckin.status === "CheckIn") {
         socket.emit("CheckIn", lastCheckin);
       }
+      if (lastCheckin.status === "Checking") {
+        socket.emit("Checking", lastCheckin);
+      }
       if (lastCheckin.status === "CheckOut") {
         socket.emit("CheckOut", lastCheckin);
       }
