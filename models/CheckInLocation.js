@@ -7,6 +7,11 @@ const checkInLocationSchema = new mongoose.Schema({
     ref: "CheckIn",
     required: true,
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   lat: {
     type: Number,
   },

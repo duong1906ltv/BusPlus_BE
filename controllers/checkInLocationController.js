@@ -11,11 +11,11 @@ const getAllCheckInLocations = async (req, res) => {
 };
 
 const createCheckInLocation = async (req, res) => {
-  const { checkinId, lat, lng } = req.body;
+  const { checkinId, lat, lng, user } = req.body;
 
   try {
     // Kiểm tra xem đã tồn tại bản ghi check-in location dựa trên checkinId
-    let checkInLocation = await CheckInLocation.findOne({ checkinId });
+    let checkInLocation = await CheckInLocation.findOne({ checkinId, user });
 
     if (checkInLocation) {
       // Nếu đã tồn tại, cập nhật vị trí mới
@@ -27,6 +27,7 @@ const createCheckInLocation = async (req, res) => {
         checkinId,
         lat,
         lng,
+        user,
       });
     }
 
