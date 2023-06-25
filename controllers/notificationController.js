@@ -12,7 +12,13 @@ const getAllNotifications = async (req, res) => {
 const getAllNotificationsOfUser = async (req, res) => {
   try {
     const notifications = await Notification.find({ user: req.params.id })
-      .populate("friend")
+      .populate({
+        path: "friend",
+        populate: {
+          path: "profile",
+          model: "Profile",
+        },
+      })
       .sort({ createdAt: -1 });
 
     const adminNotifications = await Notification.find({ user: null }).sort({
