@@ -11,6 +11,12 @@ const checkInSchema = new mongoose.Schema({
     type: String,
     enum: ["Checking", "CheckIn", "CheckOut"],
   },
+  busNumber: {
+    type: String,
+  },
+  routeNumber: {
+    type: String,
+  },
   lat: {
     type: Number,
   },
