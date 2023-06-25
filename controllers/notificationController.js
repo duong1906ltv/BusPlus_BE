@@ -11,9 +11,13 @@ const getAllNotifications = async (req, res) => {
 
 const getAllNotificationsOfUser = async (req, res) => {
   try {
-    const notifications = await Notification.find({ user: req.params.id });
+    const notifications = await Notification.find({ user: req.params.id })
+      .populate("friend")
+      .sort({ createdAt: -1 });
 
-    const adminNotifications = await Notification.find({ user: null });
+    const adminNotifications = await Notification.find({ user: null }).sort({
+      createdAt: -1,
+    });
 
     const allNotifications = [...notifications, ...adminNotifications];
     res.status(200).json(allNotifications);
