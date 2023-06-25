@@ -318,13 +318,20 @@ const freezeUser = async (req, res) => {
       { user: userId, friends: { $elemMatch: { user: friendId } } },
       { $set: { "friends.$.status": "freeze" } },
       { new: true }
-    );
+    ).populate({
+      path: "friends.profile",
+    });
 
     if (!profile) {
       return res.status(400).json({ error: "Friend not found" });
     }
 
-    return res.status(200).json({ message: "Status updated to freeze" });
+    const friends = profile.friends.map((friend) => ({
+      status: friend.status,
+      profile: friend.profile,
+    }));
+
+    return res.status(200).json(friends);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Server error" });
@@ -347,13 +354,20 @@ const activeUser = async (req, res) => {
       { user: userId, friends: { $elemMatch: { user: friendId } } },
       { $set: { "friends.$.status": "active" } },
       { new: true }
-    );
+    ).populate({
+      path: "friends.profile",
+    });
 
     if (!profile) {
       return res.status(400).json({ error: "Friend not found" });
     }
 
-    return res.status(200).json({ message: "Status updated to active" });
+    const friends = profile.friends.map((friend) => ({
+      status: friend.status,
+      profile: friend.profile,
+    }));
+
+    return res.status(200).json(friends);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Server error" });
