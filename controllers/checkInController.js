@@ -1,10 +1,11 @@
 import CheckIn from "../models/CheckIn.js";
 import Profile from "../models/Profile.js";
+import User from "../models/User.js";
 
 // Lấy danh sách tất cả các vé
 const getAllCheckIns = async (req, res) => {
   try {
-    const checkIns = await CheckIn.find();
+    const checkIns = await CheckIn.find().populate("user").sort({ createdAt: -1 });
     res.status(200).json(checkIns);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -13,8 +14,9 @@ const getAllCheckIns = async (req, res) => {
 
 // Tạo một vé mới
 const createCheckIn = async (req, res) => {
-  const { status, user, lat, lng, busNumber, routeNumber } = req.body;
-
+  const { status, userId, lat, lng, busNumber, routeNumber, createdAt } = req.body;
+  
+  const user = await User.findById(userId)
   const checkIn = new CheckIn({
     status,
     user,
@@ -22,6 +24,7 @@ const createCheckIn = async (req, res) => {
     lng,
     busNumber,
     routeNumber,
+    createdAt,
   });
 
   try {
@@ -69,7 +72,7 @@ const getFriendsCheckInStatus = async (req, res) => {
     );
 
     if (!userProfile) {
-      return res.status(404).json({ message: "User profile not found" });
+      return res.status(404).json({ message: "User profile is not found" });
     }
 
     const friendCheckInStatus = [];

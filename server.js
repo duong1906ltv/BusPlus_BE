@@ -46,6 +46,10 @@ import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import checkInRoutes from "./routes/checkInRoutes.js";
 import notiRoutes from "./routes/notiRoutes.js";
+import transactionRoutes from "./routes/transactionRoutes.js"
+import ticketTypeRoutes from "./routes/ticketTypeRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/routes", routeRoutes);
@@ -54,10 +58,12 @@ app.use("/api/schedules", scheduleRoutes);
 app.use("/api/buses", busRoutes);
 app.use("/api/locations", locationRoutes);
 app.use("/api/ticket", ticketRoutes);
-app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/checkin", checkInRoutes);
 app.use("/api/noti", notiRoutes);
+app.use("/api/transactions", transactionRoutes);
+app.use("/api/ticket-type", ticketTypeRoutes);
+app.use("/api/users", userRoutes);
 
 const port = process.env.PORT || 5000;
 

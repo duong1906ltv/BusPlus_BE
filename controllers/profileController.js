@@ -76,7 +76,7 @@ const getAllProfile = async (req, res) => {
 
 //     // Kiểm tra nếu không tìm thấy user
 //     if (!user) {
-//       return res.status(404).json({ message: "User not found." });
+//       return res.status(404).json({ message: "User is not found." });
 //     }
 
 //     // Thêm user vào danh sách bạn bè

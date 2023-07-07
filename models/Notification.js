@@ -10,6 +10,9 @@ const notificationSchema = new mongoose.Schema({
     enum: ["friend check in", "admin noti"],
     default: "friend check in",
   },
+  title: {
+    type: String,
+  },
   description: {
     type: String,
   },
@@ -27,6 +30,9 @@ const notificationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  expiredAt: {
+    type: Date,
+  }
 });
 
 export default mongoose.model("Notification", notificationSchema);

@@ -1,5 +1,6 @@
 import Ticket from "../models/Ticket.js";
 import QRCode from "qrcode";
+import User from "../models/User.js";
 
 // Lấy danh sách tất cả các vé
 const getAllTickets = async (req, res) => {
@@ -13,26 +14,34 @@ const getAllTickets = async (req, res) => {
 
 // Tạo một vé mới
 const createTicket = async (req, res) => {
-  const { user, priority, ticketType, month, year } = req.body;
+  const { ticketType, month, year, description } = req.body;
+  const userId = req.user.userId
+  const user = await User.findById(userId)
+  if (!user) {
+    return res.status(404).json({ message: "User is not found" });
+  }
 
   const lastTicket = await Ticket.findOne().sort({ $natural: -1 });
 
-  const ticketNumber = Number(lastTicket.ticketCode) + 1;
+  const ticketNumber = lastTicket ?  Number(lastTicket.ticketCode) + 1 : 1;
   const ticketCode = ticketNumber.toString().padStart(8, "0");
 
   const ticket = new Ticket({
     user,
-    priority,
     ticketType,
     month,
     year,
     ticketCode,
+    description,
   });
 
   try {
     const newTicket = await ticket.save();
+    console.log(newTicket);
     res.status(201).json(newTicket);
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({ error: error.message });
   }
 };
@@ -62,7 +71,8 @@ const getAllTicketsOfUser = async (req, res) => {
           model: "Profile",
         },
       })
-      .sort({ $natural: -1 })
+      .populate("ticketType")
+      .sort({ month: 1 })
       .exec();
     res.status(200).json(tickets);
   } catch (error) {
@@ -72,13 +82,13 @@ const getAllTicketsOfUser = async (req, res) => {
 
 // Cập nhật thông tin một vé
 const updateTicket = async (req, res) => {
-  const { priority, ticketType, month, year } = req.body;
+  const { ticketType, month, year, description } = req.body;
   const ticketId = req.params.id;
 
   try {
     const ticket = await Ticket.findByIdAndUpdate(
       ticketId,
-      { $set: { priority, ticketType, month, year } },
+      { $set: { ticketType, month, year, description } },
       { new: true }
     );
 
@@ -128,7 +138,6 @@ const generateUserTicketQRCode = async (req, res) => {
         const qrCodeData = {
           ticketCode: ticket.ticketCode,
           user: ticket.user,
-          priority: ticket.priority,
           ticketType: ticket.ticketType,
           month: ticket.month,
           year: ticket.year,

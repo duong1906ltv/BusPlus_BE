@@ -33,12 +33,21 @@ const register = async (req, res) => {
 };
 const login = async (req, res) => {
   try {
-    const { phone, password } = req.body;
-    const user = await User.findOne({ phone })
-      .select("+password")
-      .populate("profile");
-    if (!user) {
-      return res.status(401).json("Invalid Credentials");
+    const { email, phone, password } = req.body;
+    var user
+    if (email){
+      user = await User.findOne({ email })
+        .select("+password")
+      if (!user) {
+        return res.status(401).json("Invalid Credentials");
+      }
+    } else {
+      user = await User.findOne({ phone })
+        .select("+password")
+        .populate("profile");
+      if (!user) {
+        return res.status(401).json("Invalid Credentials");
+      }
     }
 
     const isPasswordCorrect = await user.comparePassword(password);
@@ -47,6 +56,7 @@ const login = async (req, res) => {
     }
     const token = user.createJWT();
     user.password = undefined;
+
     res.status(200).json({ user, token });
   } catch (error) {
     console.error(error);
@@ -70,7 +80,7 @@ const deleteAccounts = async (req, res) => {
     const user = await User.findByIdAndDelete(userId);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User is not found" });
     }
 
     res.json({ message: "Deleted user" });

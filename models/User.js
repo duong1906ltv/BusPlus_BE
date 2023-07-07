@@ -3,15 +3,22 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+export const ADMIN = "ADMIN"
+export const PASSENGER = "PASSENGER"
+
 const UserSchema = new mongoose.Schema({
+  role: {
+    type: String,
+    default: PASSENGER,
+  },
   fullname: {
     type: String,
-    required: [true, "Please provide name"],
+    // required: [true, "Please provide name"],
     trim: true,
   },
   phone: {
     type: String,
-    required: [true, "Please provide phone number"],
+    // required: [true, "Please provide phone number"],
     validate: {
       validator: validator.isNumeric,
       message: "Please provide a phone number",
@@ -19,6 +26,10 @@ const UserSchema = new mongoose.Schema({
     unique: true,
     minlength: 10,
     maxlength: 11,
+  },
+  email: {
+    type: String,
+    // required: [true, "Please provide phone number"],
   },
   password: {
     type: String,
@@ -31,6 +42,7 @@ const UserSchema = new mongoose.Schema({
     ref: "Profile",
   },
 });
+
 
 UserSchema.pre("save", async function () {
   const salt = await bcrypt.genSalt(10);
@@ -47,5 +59,7 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
   const isMatch = await bcrypt.compare(candidatePassword, this.password);
   return isMatch;
 };
+
+
 
 export default mongoose.model("User", UserSchema);
