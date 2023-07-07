@@ -37,13 +37,6 @@ const createTicket = async (req, res) => {
   }
 };
 
-// Hàm tạo mã vé theo số vé và số thứ tự
-const generateTicketCode = (count) => {
-  const ticketNumber = count + 1;
-  const paddedNumber = ticketNumber.toString().padStart(8, "0");
-  return paddedNumber;
-};
-
 // Lấy thông tin một vé cụ thể
 const getTicketById = async (req, res) => {
   try {
@@ -122,7 +115,9 @@ const generateUserTicketQRCode = async (req, res) => {
 
   try {
     // Tìm vé của người dùng trong cơ sở dữ liệu
-    const tickets = await Ticket.find({ user: user });
+    const tickets = await Ticket.find({ user: user })
+      .sort({ $natural: -1 })
+      .exec();
     if (tickets.length === 0) {
       return res.status(404).json({ message: "Không có vé cho người dùng" });
     }
