@@ -1,7 +1,6 @@
 import Location from "../models/Location.js";
 import Bus from "../models/Bus.js";
 import CheckIn from "../models/CheckIn.js";
-import CheckInLocation from "../models/CheckInLocation.js";
 
 export const locationChangeStream = (socket) => {
   // Lắng nghe sự kiện cập nhật từ bảng "Location"
@@ -57,28 +56,6 @@ export const checkInStream = (socket) => {
       if (lastCheckin.status === "CheckOut") {
         socket.emit("CheckOut", lastCheckin);
       }
-    }
-  });
-};
-
-export const checkInLocationStream = (socket) => {
-  const checkInLocationStream = CheckInLocation.watch();
-  checkInLocationStream.on("change", async (change) => {
-    if (change.operationType === "insert") {
-      const lastCheckin = await CheckInLocation.findOne()
-        .sort({ $natural: -1 })
-        .populate("checkinId user");
-
-      socket.emit("startHearingLocationOfUser", lastCheckin);
-    }
-    if (change.operationType === "update") {
-      const documentId = change.documentKey._id;
-      // Truy vấn MongoDB để lấy document mới nhất
-      const updatedDocument = await CheckInLocation.findById(
-        documentId
-      ).populate("checkinId user");
-      // Cập nhật vị trí của biểu tượng xe buýt trên bản đồ
-      socket.emit("updateLocationOfUser", updatedDocument);
     }
   });
 };

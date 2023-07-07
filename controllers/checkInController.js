@@ -13,11 +13,15 @@ const getAllCheckIns = async (req, res) => {
 
 // Tạo một vé mới
 const createCheckIn = async (req, res) => {
-  const { status, user } = req.body;
+  const { status, user, lat, lng, busNumber, routeNumber } = req.body;
 
   const checkIn = new CheckIn({
     status,
     user,
+    lat,
+    lng,
+    busNumber,
+    routeNumber,
   });
 
   try {
@@ -34,8 +38,6 @@ const getFollowStatus = async (req, res) => {
     const friendId = req.params.id;
 
     const FriendProfile = await Profile.findOne({ user: friendId });
-
-    console.log(FriendProfile);
 
     if (!FriendProfile) {
       return res.status(404).json({ message: "Friend profile not found" });
