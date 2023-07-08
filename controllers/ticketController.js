@@ -15,15 +15,15 @@ const getAllTickets = async (req, res) => {
 // Tạo một vé mới
 const createTicket = async (req, res) => {
   const { ticketType, month, year, description } = req.body;
-  const userId = req.user.userId
-  const user = await User.findById(userId)
+  const userId = req.user.userId;
+  const user = await User.findById(userId);
   if (!user) {
     return res.status(404).json({ message: "User is not found" });
   }
 
   const lastTicket = await Ticket.findOne().sort({ $natural: -1 });
 
-  const ticketNumber = lastTicket ?  Number(lastTicket.ticketCode) + 1 : 1;
+  const ticketNumber = lastTicket ? Number(lastTicket.ticketCode) + 1 : 1;
   const ticketCode = ticketNumber.toString().padStart(8, "0");
 
   const ticket = new Ticket({
@@ -129,7 +129,7 @@ const generateUserTicketQRCode = async (req, res) => {
       .sort({ $natural: -1 })
       .exec();
     if (tickets.length === 0) {
-      return res.status(404).json({ message: "Không có vé cho người dùng" });
+      return res.status(200).json(tickets);
     }
     // Lặp qua từng vé và sinh QR code
     const qrCodes = await Promise.all(
