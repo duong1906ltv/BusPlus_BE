@@ -37,7 +37,6 @@ const createTicket = async (req, res) => {
 
   try {
     const newTicket = await ticket.save();
-    console.log(newTicket);
     res.status(201).json(newTicket);
   } catch (error) {
     console.log(error);

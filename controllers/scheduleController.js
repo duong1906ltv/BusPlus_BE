@@ -45,19 +45,30 @@ const createSchedule = async (req, res) => {
 
 // Phương thức để cập nhật thông tin của một tuyến xe buýt
 const updateSchedule = async (req, res) => {
+	const routeNumber = req.params.routeNumber
+	console.log("-------------");
+	console.log(routeNumber);
 	try {
-		const schedule = await Schedule.findByIdAndUpdate(
-			req.params.id,
-			req.body,
-			{
-				new: true,
-			}
-		); // Tìm và cập nhật thông tin tuyến xe buýt theo ID
-		if (!schedule) {
-			return res
-				.status(404)
-				.json({ message: "Không tìm thấy lichj trình" });
+		const route = await Route.findOne({
+			routeNumber: routeNumber,
+		});
+		if (!route) {
+			return res.status(404).json({ error: "Route is not found" });
 		}
+		const schedule = await Schedule.findOne({
+			route: route,
+		});
+		if (!schedule) {
+			return res.status(404).json({ error: "Schedule is not found" });
+		}
+		if (req.body.departureTime){
+			schedule.departureTime = req.body.departureTime
+		}
+		if (req.body.arrivalTime) {
+			schedule.departureTime = req.body.arrivalTime
+		}
+		await schedule.save()
+
 		res.status(200).json(schedule); // Trả về thông tin tuyến xe buýt đã được cập nhật dưới dạng JSON
 	} catch (error) {
 		res.status(400).json({ message: error.message });

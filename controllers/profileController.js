@@ -20,8 +20,10 @@ const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phone, address, dateOfBirth, avatar, gender } =
       req.body;
-
-    const userId = req.user.userId;
+    var userId = req.params.userId
+    if(!userId){
+      userId = req.user.userId;
+    }
 
     // Kiểm tra xem hồ sơ có tồn tại hay không
     const existingProfile = await Profile.findOne({ user: userId });
