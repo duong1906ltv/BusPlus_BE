@@ -91,7 +91,7 @@ const updateBusStatus = async (req, res) => {
 
 const getActiveBuses = async (req, res) => {
   try {
-    const buses = await Bus.find({ activeStatus: true });
+    const buses = await Bus.find({ activeStatus: true }).populate("routeId");
     if (!buses || buses.length === 0) {
       return res.status(200).json(0);
     }
@@ -99,7 +99,11 @@ const getActiveBuses = async (req, res) => {
     const busLocations = await Promise.all(
       buses.map(async (bus) => {
         const location = await Location.findOne({ busId: bus._id });
-        return { busId: bus._id, location };
+        return {
+          busId: bus._id,
+          routeNumber: bus.routeId.routeNumber,
+          location,
+        };
       })
     );
 
