@@ -4,7 +4,6 @@ import TicketType from "../models/TicketType.js";
 const getAllTicketType = async (req, res) => {
   try {
     const ticketTypes = await TicketType.find();
-    console.log(ticketTypes);
     res.status(200).json(ticketTypes);
   } catch (error) {
     res.status(500).json({ error: error.message });

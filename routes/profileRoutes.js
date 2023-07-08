@@ -16,6 +16,7 @@ import {
 } from "../controllers/profileController.js";
 import authenticateUser from "../middleware/auth.js";
 
+router.route("/:userId").patch(updateProfile);
 router.route("/").get(getAllProfile).patch(authenticateUser, updateProfile);
 router.route("/:userId").get(getProfileById);
 router.route("/send-request").post(authenticateUser, sendFriendRequest);

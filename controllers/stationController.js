@@ -11,14 +11,22 @@ const getAllStations = async (req, res) => {
 	}
 };
 
-// Phương thức để tạo một trạm xe buýt mới
 const createStation = async (req, res) => {
+	const { direction, position, routeNumber } = req.body
+	const station = new Station(req.body.station)
 	try {
-		const newStation = new Station(req.body); // Tạo đối tượng Route mới từ dữ liệu gửi lên từ client
-		await newStation.save(); // Lưu đối tượng Route mới vào cơ sở dữ liệu
-		res.status(201).json(newStation); // Trả về đối tượng Route mới đã được tạo dưới dạng JSON
+		const newStation = await station.save();
+		const route = await Route.findOne({routeNumber})
+		if (direction === "FORWARD"){
+			route.forwardRoute.splice(position, 0, newStation._id)
+		} else if (direction === "BACKWARD") {
+			route.backwardRoute.splice(position, 0, newStation._id)
+		}
+		await route.save()
+		return res.status(200).json({ message: "Create new station successfully" });
+
 	} catch (error) {
-		res.status(500).json({ error: error.message }); // Xử lý lỗi nếu có
+		res.status(500).json({ error: error.message }); 
 	}
 };
 
@@ -33,7 +41,6 @@ const createListStation = async (req, res) => {
 				name: station.name,
 			});
 			if (existingStation) {
-				console.log(`Station ${station.name} already exists`);
 				continue;
 			}
 
@@ -51,29 +58,41 @@ const createListStation = async (req, res) => {
 	}
 };
 
-// Phương thức để cập nhật thông tin của một tuyến xe buýt
-const updateRoute = async (req, res) => {
+
+
+
+const updateStation = async (req, res) => {
+	const {name, location} = req.body
+	const id = req.params.id;
 	try {
-		const route = await Route.findByIdAndUpdate(req.params.id, req.body, {
-			new: true,
-		}); // Tìm và cập nhật thông tin tuyến xe buýt theo ID
-		if (!route) {
-			return res.status(404).json({ message: "Không tìm thấy xe buýt" });
-		}
-		res.status(200).json(route); // Trả về thông tin tuyến xe buýt đã được cập nhật dưới dạng JSON
+		const updateStation = await Station.findByIdAndUpdate(
+			id,
+			{ $set: { name, location } },
+			{ new: true }
+		);
+		res.json(updateStation);
 	} catch (error) {
 		res.status(400).json({ message: error.message });
 	}
 };
 
 // Phương thức để xóa một tuyến xe buýt
-const deleteRoute = async (req, res) => {
+const deleteStation = async (req, res) => {
+	const { direction, position, routeNumber } = req.body
 	try {
-		const route = await Route.findByIdAndDelete(req.params.id); // Tìm và xóa xe buýt theo ID
-		if (!route) {
-			return res.status(404).json({ message: "Không tìm thấy xe buýt" });
+		const route = await Route.findOne({ routeNumber })
+		if (direction === "FORWARD") {
+			route.forwardRoute.splice(position, 1)
+		} else if (direction === "BACKWARD") {
+			route.backwardRoute.splice(position, 1)
 		}
-		res.status(200).json({ message: "Xóa xe buýt thành công" });
+		await route.save()
+
+		const station = await Station.findByIdAndDelete(req.params.id); // Tìm và xóa xe buýt theo ID
+		if (!station) {
+			return res.status(404).json({ message: "Station is not found" });
+		}
+		res.status(200).json({ message: "Delete station successfully" });
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
@@ -83,6 +102,6 @@ export {
 	getAllStations,
 	createStation,
 	createListStation,
-	updateRoute,
-	deleteRoute,
+	updateStation,
+	deleteStation,
 };

@@ -41,6 +41,9 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Profile",
   },
+  deletedAt: {
+    type: Date,
+  },
 });
 
 

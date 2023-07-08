@@ -37,7 +37,6 @@ const getForwardRouteStations = async (req, res) => {
 
     // Lấy thông tin lịch trình cho route
     const schedule = await Schedule.findOne({ route: route._id });
-    const { departureTime, arrivalTime } = schedule;
 
     const result = {
       route: {
@@ -47,10 +46,7 @@ const getForwardRouteStations = async (req, res) => {
         cost: route.cost,
         forwardRoute: forwardStations,
       },
-      schedule: {
-        departureTime: departureTime.join(", "),
-        arrivalTime: arrivalTime.join(", "),
-      },
+      schedule: schedule
     };
     res.status(200).json(result);
   } catch (error) {

@@ -52,6 +52,9 @@ const profileSchema = new mongoose.Schema({
       },
     },
   ],
+  deletedAt: {
+    type: Date,
+  },
 });
 
 export default mongoose.model("Profile", profileSchema);

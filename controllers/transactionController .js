@@ -21,7 +21,6 @@ const createTransaction = async (req, res) => {
   });
   try {
     const newTransaction = await transaction.save();
-    console.log(newTransaction);
     res.status(201).json(newTransaction);
   } catch (error) {
     res.status(500).json({ error: error.message });
