@@ -89,14 +89,21 @@ const updateBusStatus = async (req, res) => {
   }
 };
 
-const getActiveBus = async (req, res) => {
+const getActiveBuses = async (req, res) => {
   try {
-    const bus = await Bus.find({ activeStatus: true });
-    if (!bus) {
-      return res.status(400).json({ message: "Bus not found" });
+    const buses = await Bus.find({ activeStatus: true });
+    if (!buses || buses.length === 0) {
+      return res.status(400).json({ message: "No active buses found" });
     }
-    const location = await Location.findOne({ busId: bus });
-    res.status(201).json({ bus, location });
+
+    const busLocations = await Promise.all(
+      buses.map(async (bus) => {
+        const location = await Location.findOne({ busId: bus._id });
+        return { busId: bus._id, location };
+      })
+    );
+
+    res.status(200).json(busLocations);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
@@ -110,5 +117,5 @@ export {
   getAllBuses,
   getBusById,
   updateBusStatus,
-  getActiveBus,
+  getActiveBuses,
 };
