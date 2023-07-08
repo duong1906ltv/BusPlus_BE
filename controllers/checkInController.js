@@ -5,7 +5,9 @@ import User from "../models/User.js";
 // Lấy danh sách tất cả các vé
 const getAllCheckIns = async (req, res) => {
   try {
-    const checkIns = await CheckIn.find().populate("user").sort({ createdAt: -1 });
+    const checkIns = await CheckIn.find()
+      .populate("user")
+      .sort({ createdAt: -1 });
     res.status(200).json(checkIns);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -14,9 +16,9 @@ const getAllCheckIns = async (req, res) => {
 
 // Tạo một vé mới
 const createCheckIn = async (req, res) => {
-  const { status, userId, lat, lng, busNumber, routeNumber, createdAt } = req.body;
-  
-  const user = await User.findById(userId)
+  const { status, userId, lat, lng, busNumber, routeNumber } = req.body;
+
+  const user = await User.findById(userId);
   const checkIn = new CheckIn({
     status,
     user,
@@ -24,7 +26,6 @@ const createCheckIn = async (req, res) => {
     lng,
     busNumber,
     routeNumber,
-    createdAt,
   });
 
   try {
