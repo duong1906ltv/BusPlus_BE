@@ -76,7 +76,7 @@ const deleteBusInformation = async (req, res) => {
 
 const updateBusStatus = async (req, res) => {
   try {
-    const bus = await Bus.findOne({ busName: req.body.busName });
+    const bus = await Bus.findOne({ busNumber: req.body.busNumber });
     if (!bus) {
       return res.status(400).json({ message: "Bus not found" });
     }
