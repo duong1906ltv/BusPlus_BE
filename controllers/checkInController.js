@@ -100,7 +100,22 @@ const getFriendsCheckInStatus = async (req, res) => {
     res.status(200).json({ friendCheckInStatus });
   } catch (error) {
     console.error("Error getting friends check-in status:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+const changeNotiStatus = async (req, res) => {
+  try {
+    const { checkinId } = req.body;
+
+    const checkIn = await CheckIn.findByIdAndUpdate(checkinId, {
+      $set: { noti: true },
+    });
+
+    res.status(200).json(checkIn);
+  } catch (error) {
+    console.error("Error getting friends check-in status:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -109,4 +124,5 @@ export {
   createCheckIn,
   getFollowStatus,
   getFriendsCheckInStatus,
+  changeNotiStatus,
 };
