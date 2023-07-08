@@ -26,13 +26,19 @@ const notificationSchema = new mongoose.Schema({
   lng: {
     type: Number,
   },
+  routeNumber: {
+    type: String,
+  },
+  busNumber: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
   expiredAt: {
     type: Date,
-  }
+  },
 });
 
 export default mongoose.model("Notification", notificationSchema);

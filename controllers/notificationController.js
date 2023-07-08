@@ -11,7 +11,9 @@ const getAllNotifications = async (req, res) => {
 
 const getAdminNotifications = async (req, res) => {
   try {
-    const notis = await Notification.find({ type: "admin noti" }).sort({ createdAt: -1 });
+    const notis = await Notification.find({ type: "admin noti" }).sort({
+      createdAt: -1,
+    });
     res.status(200).json(notis);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -42,10 +44,21 @@ const getAllNotificationsOfUser = async (req, res) => {
 };
 
 const createNotification = async (req, res) => {
-  var { user, type, title, description, expiredAt, friend, lat, lng } = req.body;
-  if (!expiredAt){
+  var {
+    user,
+    type,
+    title,
+    description,
+    expiredAt,
+    friend,
+    lat,
+    lng,
+    busNumber,
+    routeNumber,
+  } = req.body;
+  if (!expiredAt) {
     var currentDate = new Date();
-    expiredAt = new Date(currentDate.setDate(currentDate.getDate() + 1))
+    expiredAt = new Date(currentDate.setDate(currentDate.getDate() + 1));
   }
 
   try {
@@ -59,6 +72,8 @@ const createNotification = async (req, res) => {
       friend,
       lat,
       lng,
+      busNumber,
+      routeNumber,
     });
 
     await notification.save();
@@ -67,7 +82,6 @@ const createNotification = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 const updateNotification = async (req, res) => {
   const { title, description, expiredAt } = req.body;
@@ -105,4 +119,11 @@ const deleteNotification = async (req, res) => {
   }
 };
 
-export { getAllNotifications, getAdminNotifications, getAllNotificationsOfUser, createNotification, updateNotification, deleteNotification };
+export {
+  getAllNotifications,
+  getAdminNotifications,
+  getAllNotificationsOfUser,
+  createNotification,
+  updateNotification,
+  deleteNotification,
+};
