@@ -93,7 +93,7 @@ const getActiveBuses = async (req, res) => {
   try {
     const buses = await Bus.find({ activeStatus: true });
     if (!buses || buses.length === 0) {
-      return res.status(400).json({ message: "No active buses found" });
+      return res.status(400).json(0);
     }
 
     const busLocations = await Promise.all(
