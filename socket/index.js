@@ -50,12 +50,13 @@ export const checkInStream = (socket) => {
       if (lastCheckin.status === "CheckIn") {
         socket.emit("CheckIn", lastCheckin);
       }
-      if (lastCheckin.status === "Checking") {
-        socket.emit("Checking", lastCheckin);
-      }
       if (lastCheckin.status === "CheckOut") {
         socket.emit("CheckOut", lastCheckin);
       }
+    }
+    if (change.operationType === "update") {
+      const lastCheckin = await CheckIn.findOne().sort({ $natural: -1 });
+      socket.emit("noti", lastCheckin);
     }
   });
 };
