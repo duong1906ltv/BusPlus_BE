@@ -56,7 +56,9 @@ export const checkInStream = (socket) => {
     }
     if (change.operationType === "update") {
       const lastCheckin = await CheckIn.findOne().sort({ $natural: -1 });
-      socket.emit("noti", lastCheckin);
+      if (lastCheckin.noti === true) {
+        socket.emit("noti", lastCheckin);
+      }
     }
   });
 };
