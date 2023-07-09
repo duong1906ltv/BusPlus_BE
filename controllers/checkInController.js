@@ -14,9 +14,40 @@ const getAllCheckIns = async (req, res) => {
   }
 };
 
+const getCurrentCheckIns = async (req, res) => {
+  try {
+    const today = new Date();
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    const checkIns = await CheckIn.find({
+      createdAt: {
+        $gte: startOfDay,
+        $lt: endOfDay
+      }
+    }).sort({ createdAt: -1 });
+
+    const currentCheckIns = []
+    checkIns.map(checkIn => {
+      if (checkIn.status === "CheckIn") {
+          const isExist = currentCheckIns.filter(item => item.user.toString() === checkIn.user.toString()).length
+          const isCheckOut = checkIns.filter(item => item.status === "CheckOut" && item.user.toString() === checkIn.user.toString() && item.createdAt > checkIn.createdAt).length
+        console.log(isExist, isCheckOut);
+
+          if (!isExist && !isCheckOut) {
+            currentCheckIns.push(checkIn)
+          }
+      }
+    })
+
+    res.status(200).json(currentCheckIns);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Tạo một vé mới
 const createCheckIn = async (req, res) => {
-  const { status, userId, lat, lng, busNumber, routeNumber } = req.body;
+  const { status, userId, lat, lng, busNumber, routeNumber, createdAt } = req.body;
 
   const user = await User.findById(userId);
   const checkIn = new CheckIn({
@@ -25,7 +56,7 @@ const createCheckIn = async (req, res) => {
     lat,
     lng,
     busNumber,
-    routeNumber,
+    routeNumber, createdAt
   });
 
   try {
@@ -121,6 +152,7 @@ const changeNotiStatus = async (req, res) => {
 
 export {
   getAllCheckIns,
+  getCurrentCheckIns,
   createCheckIn,
   getFollowStatus,
   getFriendsCheckInStatus,
