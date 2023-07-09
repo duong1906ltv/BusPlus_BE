@@ -9,6 +9,7 @@ import {
   getFollowStatus,
   getFriendsCheckInStatus,
   changeNotiStatus,
+  getCurrentCheckIns,
 } from "../controllers/checkInController.js";
 
 router
@@ -16,6 +17,7 @@ router
   .get(getAllCheckIns)
   .post(createCheckIn)
   .patch(changeNotiStatus);
+router.route("/current").get(getCurrentCheckIns)
 router.route("/follow-status/:id").get(authenticateUser, getFollowStatus);
 router.get("/friends/checkin/:userId", getFriendsCheckInStatus);
 
