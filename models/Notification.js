@@ -7,7 +7,7 @@ const notificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["friend check in", "admin noti"],
+    enum: ["friend check in", "friend check out", "admin noti"],
     default: "friend check in",
   },
   title: {
