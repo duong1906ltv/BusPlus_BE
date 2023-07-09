@@ -20,8 +20,8 @@ const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phone, address, dateOfBirth, avatar, gender } =
       req.body;
-    var userId = req.params.userId
-    if(!userId){
+    var userId = req.params.userId;
+    if (!userId) {
       userId = req.user.userId;
     }
 
@@ -390,6 +390,7 @@ const getListFriend = async (req, res) => {
     }
 
     const friends = profile.friends.map((friend) => ({
+      fullname: profile.fullname,
       status: friend.status,
       profile: friend.profile,
     }));
