@@ -100,7 +100,7 @@ const getActiveBuses = async (req, res) => {
       buses.map(async (bus) => {
         const location = await Location.findOne({ busId: bus._id });
         return {
-          busId: bus._id,
+          bus: bus,
           routeNumber: bus.routeId.routeNumber,
           location,
         };
