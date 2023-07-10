@@ -140,6 +140,7 @@ const generateUserTicketQRCode = async (req, res) => {
           ticketType: ticket.ticketType,
           month: ticket.month,
           year: ticket.year,
+          description: ticket.description,
         };
         // Chuyển đổi dữ liệu thành chuỗi JSON
         const jsonData = JSON.stringify(qrCodeData);
