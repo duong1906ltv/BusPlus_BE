@@ -43,6 +43,29 @@ const getAllNotificationsOfUser = async (req, res) => {
   }
 };
 
+const getCurrentAdminNotification = async (req, res) => {
+  try {
+    const today = new Date();
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+
+    const notifications = await Notification.find(
+      {
+        type: 'admin noti',
+        createdAt: {
+          $gte: startOfDay,
+          $lt: endOfDay
+        }
+      })
+
+
+    res.status(200).json(notifications);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 const createNotification = async (req, res) => {
   var {
     user,
@@ -125,6 +148,7 @@ export {
   getAllNotifications,
   getAdminNotifications,
   getAllNotificationsOfUser,
+  getCurrentAdminNotification,
   createNotification,
   updateNotification,
   deleteNotification,
