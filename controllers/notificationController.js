@@ -55,6 +55,7 @@ const createNotification = async (req, res) => {
     lng,
     busNumber,
     routeNumber,
+    status,
   } = req.body;
   if (!expiredAt) {
     var currentDate = new Date();
@@ -74,6 +75,7 @@ const createNotification = async (req, res) => {
       lng,
       busNumber,
       routeNumber,
+      status,
     });
 
     await notification.save();

@@ -73,7 +73,7 @@ export const notiStream = (socket) => {
       if (lastNoti.type === "system noti") {
         socket.emit("SystemNoti", lastNoti);
       }
-      if (lastCheckin.status === "admin noti") {
+      if (lastNoti.status === "admin noti") {
         socket.emit("AdminNoti", lastNoti);
       }
     }
