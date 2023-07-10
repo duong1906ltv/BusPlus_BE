@@ -17,6 +17,7 @@ import {
   busChangeStream,
   locationChangeStream,
   checkInStream,
+  notiStream,
 } from "./socket/index.js";
 import { Server } from "socket.io";
 import http from "http";
@@ -28,6 +29,7 @@ io.on("connection", (socket) => {
   busChangeStream(socket);
   locationChangeStream(socket);
   checkInStream(socket);
+  notiStream(socket);
 
   // Ngắt kết nối của client
   socket.on("disconnect", () => {
@@ -46,10 +48,9 @@ import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import checkInRoutes from "./routes/checkInRoutes.js";
 import notiRoutes from "./routes/notiRoutes.js";
-import transactionRoutes from "./routes/transactionRoutes.js"
+import transactionRoutes from "./routes/transactionRoutes.js";
 import ticketTypeRoutes from "./routes/ticketTypeRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-
 
 app.use("/api/auth", authRoutes);
 app.use("/api/routes", routeRoutes);

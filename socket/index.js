@@ -62,3 +62,19 @@ export const checkInStream = (socket) => {
     }
   });
 };
+
+export const notiStream = (socket) => {
+  const notiStream = Notification.watch();
+  // Khi có sự thay đổi trong bảng "Bus"
+  notiStream.on("change", async (change) => {
+    if (change.operationType === "insert") {
+      const lastNoti = await Notification.findOne().sort({ $natural: -1 });
+      if (lastNoti.type === "system noti") {
+        socket.emit("SystemNoti", lastNoti);
+      }
+      if (lastCheckin.status === "admin noti") {
+        socket.emit("AdminNoti", lastNoti);
+      }
+    }
+  });
+};

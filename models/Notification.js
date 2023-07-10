@@ -7,8 +7,12 @@ const notificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["friend check in", "friend check out", "admin noti"],
+    enum: ["friend check in", "system noti", "admin noti"],
     default: "friend check in",
+  },
+  status: {
+    type: String,
+    enum: ["check in", "check out"],
   },
   title: {
     type: String,
