@@ -1,6 +1,7 @@
 import Location from "../models/Location.js";
 import Bus from "../models/Bus.js";
 import CheckIn from "../models/CheckIn.js";
+import Notification from "../models/Notification.js";
 
 export const locationChangeStream = (socket) => {
   // Lắng nghe sự kiện cập nhật từ bảng "Location"
